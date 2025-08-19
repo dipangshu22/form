@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comment Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        h2 {
+            margin-top: 0;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        input, textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        button {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .comments {
+            margin-top: 32px;
+        }
+        .comment {
+            background: #f9f9f9;
+            border-left: 4px solid #007bff;
+            margin-bottom: 16px;
+            padding: 12px 16px;
+            border-radius: 4px;
+        }
+        .comment .author {
+            font-weight: bold;
+        }
+        .comment .date {
+            color: #888;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Leave a Comment</h2>
+        <form id="commentForm">
+            <input type="text" id="author" name="author" placeholder="Your Name" required>
+            <textarea id="message" name="message" rows="4" placeholder="Your Comment" required></textarea>
+            <button type="submit">Post Comment</button>
+        </form>
+        <div class="comments" id="comments">
+            <!-- Comments will appear here -->
+        </div>
+    </div>
+    <script>
+        const form = document.getElementById('commentForm');
+        const commentsDiv = document.getElementById('comments');
+
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const author = document.getElementById('author').value;
+            const message = document.getElementById('message').value;
+            const date = new Date().toLocaleString();
+
+                const commentId = 'comment-' + Date.now();
+                const commentHTML = `
+                    <div class="comment" id="${commentId}">
+                        <div class="author">${author}</div>
+                        <div class="date">${date}</div>
+                        <div class="message">${message}</div>
+                        <button class="like-btn" onclick="likeComment('${commentId}')">Like <span class="like-count">0</span></button>
+                    </div>
+                `;
+                commentsDiv.innerHTML = commentHTML + commentsDiv.innerHTML;
+                form.reset();
+        });
+
+            function likeComment(id) {
+                const comment = document.getElementById(id);
+                const countSpan = comment.querySelector('.like-count');
+                let count = parseInt(countSpan.textContent, 10);
+                countSpan.textContent = count + 1;
+            }
+    </script>
+</body>
+</html>
