@@ -82,7 +82,7 @@
 
         // Fetch and display comments from backend
         async function loadComments() {
-            const res = await fetch('http://localhost:3001/api/comments');
+            const res = await fetch('/api/comments');
             const comments = await res.json();
             commentsDiv.innerHTML = '';
             comments.forEach(comment => {
@@ -104,7 +104,7 @@
             e.preventDefault();
             const author = document.getElementById('author').value;
             const message = document.getElementById('message').value;
-            await fetch('http://localhost:3001/api/comments', {
+            await fetch('/api/comments', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ author, message })
@@ -114,8 +114,10 @@
         });
 
         window.likeComment = async function(id) {
-            await fetch(`http://localhost:3001/api/comments/${id}/like`, {
-                method: 'POST'
+            await fetch('/api/like', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id })
             });
             loadComments();
         }
