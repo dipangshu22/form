@@ -80,31 +80,45 @@
         const form = document.getElementById('commentForm');
         const commentsDiv = document.getElementById('comments');
 
-        form.addEventListener('submit', function(e) {
+        // Fetch and display comments from backend
+        async function loadComments() {
+            const res = await fetch('http://localhost:3001/api/comments');
+            const comments = await res.json();
+            commentsDiv.innerHTML = '';
+            comments.forEach(comment => {
+                const commentHTML = `
+                    <div class="comment" id="comment-${comment.id}">
+                        <div class="author">${comment.author}</div>
+                        <div class="date">${new Date(comment.date).toLocaleString()}</div>
+                        <div class="message">${comment.message}</div>
+                        <button class="like-btn" onclick="likeComment(${comment.id})">Like <span class="like-count">${comment.likes}</span></button>
+                    </div>
+                `;
+                commentsDiv.innerHTML += commentHTML;
+            });
+        }
+
+        loadComments();
+
+        form.addEventListener('submit', async function(e) {
             e.preventDefault();
             const author = document.getElementById('author').value;
             const message = document.getElementById('message').value;
-            const date = new Date().toLocaleString();
-
-                const commentId = 'comment-' + Date.now();
-                const commentHTML = `
-                    <div class="comment" id="${commentId}">
-                        <div class="author">${author}</div>
-                        <div class="date">${date}</div>
-                        <div class="message">${message}</div>
-                        <button class="like-btn" onclick="likeComment('${commentId}')">Like <span class="like-count">0</span></button>
-                    </div>
-                `;
-                commentsDiv.innerHTML = commentHTML + commentsDiv.innerHTML;
-                form.reset();
+            await fetch('http://localhost:3001/api/comments', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ author, message })
+            });
+            form.reset();
+            loadComments();
         });
 
-            function likeComment(id) {
-                const comment = document.getElementById(id);
-                const countSpan = comment.querySelector('.like-count');
-                let count = parseInt(countSpan.textContent, 10);
-                countSpan.textContent = count + 1;
-            }
+        window.likeComment = async function(id) {
+            await fetch(`http://localhost:3001/api/comments/${id}/like`, {
+                method: 'POST'
+            });
+            loadComments();
+        }
     </script>
 </body>
 </html>
